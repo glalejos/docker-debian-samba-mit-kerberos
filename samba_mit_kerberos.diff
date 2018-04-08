@@ -1,0 +1,149 @@
+diff -b --unified --recursive src/samba-4.7.4+dfsg/debian/changelog dst/samba-4.7.4+dfsg/debian/changelog
+--- src/samba-4.7.4+dfsg/debian/changelog	2018-01-11 19:49:28.000000000 +0000
++++ dst/samba-4.7.4+dfsg/debian/changelog	2018-02-25 19:19:16.000000000 +0000
+@@ -1,3 +1,10 @@
++samba (2:4.7.4+dfsg-1.1) UNRELEASED; urgency=medium
++
++  * Non-maintainer upload.
++  * 
++
++ -- root <root@example.com>  Fri, 23 Feb 2018 20:03:19 +0000
++
+ samba (2:4.7.4+dfsg-1) unstable; urgency=medium
+ 
+   * New upstream version
+diff -b --unified --recursive src/samba-4.7.4+dfsg/debian/control dst/samba-4.7.4+dfsg/debian/control
+--- src/samba-4.7.4+dfsg/debian/control	2018-01-11 19:49:28.000000000 +0000
++++ dst/samba-4.7.4+dfsg/debian/control	2018-02-25 19:19:16.000000000 +0000
+@@ -56,7 +56,9 @@
+                python3,
+                xfslibs-dev [linux-any],
+                xsltproc,
+-               zlib1g-dev (>= 1:1.2.3)
++               zlib1g-dev (>= 1:1.2.3),
++	       libkrb5-dev (>= 1.15.1~),
++	       krb5-kdc (>= 1.15.1~)
+ Build-Conflicts-Arch: libaio-dev [linux-any]
+ Vcs-Browser: https://salsa.debian.org/samba-team/samba
+ Vcs-Git: https://salsa.debian.org/samba-team/samba.git
+diff -b --unified --recursive src/samba-4.7.4+dfsg/debian/libsamba-heimdal.install dst/samba-4.7.4+dfsg/debian/libsamba-heimdal.install
+--- src/samba-4.7.4+dfsg/debian/libsamba-heimdal.install	2018-01-11 13:15:14.000000000 +0000
++++ dst/samba-4.7.4+dfsg/debian/libsamba-heimdal.install	2018-02-25 19:19:16.000000000 +0000
+@@ -1,22 +0,0 @@
+-usr/lib/*/samba/libasn1-samba4.so.8
+-usr/lib/*/samba/libasn1-samba4.so.8.0.0
+-usr/lib/*/samba/libgssapi-samba4.so.2
+-usr/lib/*/samba/libgssapi-samba4.so.2.0.0
+-usr/lib/*/samba/libhcrypto-samba4.so.5
+-usr/lib/*/samba/libhcrypto-samba4.so.5.0.1
+-usr/lib/*/samba/libhdb-samba4.so.11
+-usr/lib/*/samba/libhdb-samba4.so.11.0.2
+-usr/lib/*/samba/libheimbase-samba4.so.1
+-usr/lib/*/samba/libheimbase-samba4.so.1.0.0
+-usr/lib/*/samba/libheimntlm-samba4.so.1
+-usr/lib/*/samba/libheimntlm-samba4.so.1.0.1
+-usr/lib/*/samba/libhx509-samba4.so.5
+-usr/lib/*/samba/libhx509-samba4.so.5.0.0
+-usr/lib/*/samba/libkdc-samba4.so.2
+-usr/lib/*/samba/libkdc-samba4.so.2.0.0
+-usr/lib/*/samba/libkrb5-samba4.so.26
+-usr/lib/*/samba/libkrb5-samba4.so.26.0.0
+-usr/lib/*/samba/libroken-samba4.so.19
+-usr/lib/*/samba/libroken-samba4.so.19.0.1
+-usr/lib/*/samba/libwind-samba4.so.0
+-usr/lib/*/samba/libwind-samba4.so.0.0.0
+diff -b --unified --recursive src/samba-4.7.4+dfsg/debian/rules dst/samba-4.7.4+dfsg/debian/rules
+--- src/samba-4.7.4+dfsg/debian/rules	2018-01-11 13:15:14.000000000 +0000
++++ dst/samba-4.7.4+dfsg/debian/rules	2018-02-25 19:19:16.000000000 +0000
+@@ -83,6 +83,9 @@
+ %:
+ 	dh $* --with python2
+ 
++conf_args += \
++	--with-system-mitkrb5
++
+ override_dh_auto_configure:
+ 	$(WAF) configure $(conf_args)
+ 
+diff -b --unified --recursive src/samba-4.7.4+dfsg/debian/samba-libs.install dst/samba-4.7.4+dfsg/debian/samba-libs.install
+--- src/samba-4.7.4+dfsg/debian/samba-libs.install	2018-01-11 13:15:14.000000000 +0000
++++ dst/samba-4.7.4+dfsg/debian/samba-libs.install	2018-02-25 19:19:16.000000000 +0000
+@@ -28,8 +28,6 @@
+ usr/lib/*/samba/libMESSAGING.so.*
+ usr/lib/*/samba/libaddns.so.*
+ usr/lib/*/samba/libads.so.*
+-usr/lib/*/samba/libasn1-samba4.so.8
+-usr/lib/*/samba/libasn1-samba4.so.8.0.0
+ usr/lib/*/samba/libasn1util.so.*
+ usr/lib/*/samba/libauth-unix-token.so.0
+ usr/lib/*/samba/libauth.so.*
+@@ -44,8 +42,6 @@
+ usr/lib/*/samba/libcliauth.so.*
+ usr/lib/*/samba/libcluster.so.*
+ usr/lib/*/samba/libcmdline-credentials.so.*
+-usr/lib/*/samba/libcom_err-samba4.so.0
+-usr/lib/*/samba/libcom_err-samba4.so.0.25
+ usr/lib/*/samba/libcommon-auth.so.0
+ usr/lib/*/samba/libdbwrap.so.*
+ usr/lib/*/samba/libdcerpc-samba.so.*
+@@ -60,21 +56,9 @@
+ usr/lib/*/samba/libgensec.so.0*
+ usr/lib/*/samba/libgpo.so.*
+ usr/lib/*/samba/libgse.so.*
+-usr/lib/*/samba/libgssapi-samba4.so.2
+-usr/lib/*/samba/libgssapi-samba4.so.2.0.0
+-usr/lib/*/samba/libhcrypto-samba4.so.5
+-usr/lib/*/samba/libhcrypto-samba4.so.5.0.1
+-usr/lib/*/samba/libheimbase-samba4.so.1
+-usr/lib/*/samba/libheimbase-samba4.so.1.0.0
+-usr/lib/*/samba/libheimntlm-samba4.so.1
+-usr/lib/*/samba/libheimntlm-samba4.so.1.0.1
+ usr/lib/*/samba/libhttp.so.0
+-usr/lib/*/samba/libhx509-samba4.so.5
+-usr/lib/*/samba/libhx509-samba4.so.5.0.0
+ usr/lib/*/samba/libinterfaces.so.*
+ usr/lib/*/samba/libiov-buf.so.0
+-usr/lib/*/samba/libkrb5-samba4.so.26
+-usr/lib/*/samba/libkrb5-samba4.so.26.0.0
+ usr/lib/*/samba/libkrb5samba.so.*
+ usr/lib/*/samba/libldbsamba.so.*
+ usr/lib/*/samba/liblibcli-lsa3.so.0
+@@ -95,8 +79,6 @@
+ usr/lib/*/samba/libprinting-migrate.so.0
+ usr/lib/*/samba/libprocess-model.so.0
+ usr/lib/*/samba/libregistry.so.*
+-usr/lib/*/samba/libroken-samba4.so.19
+-usr/lib/*/samba/libroken-samba4.so.19.0.1
+ usr/lib/*/samba/libsamba-debug.so.0
+ usr/lib/*/samba/libsamba-modules.so.*
+ usr/lib/*/samba/libsamba-net.so.*
+@@ -127,8 +109,6 @@
+ usr/lib/*/samba/libutil-reg.so.0
+ usr/lib/*/samba/libutil-setid.so.0
+ usr/lib/*/samba/libutil-tdb.so.0
+-usr/lib/*/samba/libwind-samba4.so.0
+-usr/lib/*/samba/libwind-samba4.so.0.0.0
+ usr/lib/*/samba/libxattr-tdb.so.0
+ usr/lib/*/samba/process_model/*.so
+ usr/share/man/man8/idmap_rfc2307.8
+diff -b --unified --recursive src/samba-4.7.4+dfsg/debian/samba.install dst/samba-4.7.4+dfsg/debian/samba.install
+--- src/samba-4.7.4+dfsg/debian/samba.install	2018-01-11 13:15:14.000000000 +0000
++++ dst/samba-4.7.4+dfsg/debian/samba.install	2018-02-25 19:19:16.000000000 +0000
+@@ -10,12 +10,7 @@
+ usr/bin/sharesec
+ usr/bin/smbcontrol
+ usr/bin/smbstatus
+-usr/lib/*/samba/libHDB-SAMBA4.so.0
+ usr/lib/*/samba/libdb-glue.so.*
+-usr/lib/*/samba/libhdb-samba4.so.11
+-usr/lib/*/samba/libhdb-samba4.so.11.0.2
+-usr/lib/*/samba/libkdc-samba4.so.2
+-usr/lib/*/samba/libkdc-samba4.so.2.0.0
+ usr/lib/*/samba/libpac.so.*
+ usr/lib/*/samba/service/*.so
+ usr/sbin/mksmbpasswd
+@@ -39,3 +34,4 @@
+ usr/share/man/man8/samba.8
+ usr/share/man/man8/smbd.8
+ usr/share/samba/setup
++usr/lib/x86_64-linux-gnu/krb5/plugins/kdb/samba.so
